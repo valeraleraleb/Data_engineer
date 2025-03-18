@@ -6,4 +6,4 @@
 
 Пункт «что» часто называется Definition of Done, или DoD (англ. «определение сделанного»). Хороший DoD описывает полностью готовую задачу. 
 
-![Описание](https://github.com/user/repo/assets/12345678/image.png)
+![Описание]([https://github.com/user/repo/assets/12345678/image.png](https://github.com/valeraleraleb/Data_engineer/blob/main/Algoritm_raboty_s_BI_2_1663601294.png))
