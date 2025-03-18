@@ -7,3 +7,5 @@ http://127.0.0.1:7001/
 http://127.0.0.1:3334/
 
 ![Data Model](https://github.com/valeraleraleb/Data_engineer/blob/main/Docker/Data_Mart/8._Sopostavlenie_diagramm_3_1679327015.png)
+
+![Notes](https://github.com/valeraleraleb/Data_engineer/blob/main/Docker/Data_Mart/grafiki_1643036131.png)
