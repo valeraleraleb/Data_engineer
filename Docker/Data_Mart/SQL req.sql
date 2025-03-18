@@ -271,4 +271,8 @@ LEFT JOIN ual ON ua.client_id = ual.client_id
 LEFT JOIN upl ON ua.client_id = upl.client_id)
 ;
 
--- 
+-- SQL-запрос для подсчёта суммы оплат: 
+SELECT utm_campaign,
+       SUM(total_payment_amount) AS total_payment_amount
+FROM user_activity_payment_datamart
+GROUP BY utm_campaign
