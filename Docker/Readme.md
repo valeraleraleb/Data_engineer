@@ -1,1 +1,1 @@
-https://github.com/practicum-de/workshop-docker
+[Workshop]https://github.com/practicum-de/workshop-docker
