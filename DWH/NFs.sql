@@ -193,3 +193,40 @@ SELECT DISTINCT
 FROM nf_lesson.order_2nf;
 
 ALTER TABLE nf_lesson.customer_3nf ADD CONSTRAINT pk_customer_3nf PRIMARY KEY (customer_id);
+
+
+-- Теперь декомпозируйте таблицу nf_lesson.product_2nf. 
+-- Создайте таблицы nf_lesson.product_3nf и nf_lesson.craftsman_3nf, в которых все неключевые поля будут нетранзитивно зависеть от ключевого поля
+
+/*Создание таблиц nf_lesson.product_3nf*/
+DROP TABLE IF EXISTS nf_lesson.product_3nf;
+CREATE TABLE nf_lesson.product_3nf AS
+SELECT DISTINCT 
+	product_id
+	, product_name
+	, product_description
+	, product_type
+	, product_price
+	, craftsman_id
+FROM nf_lesson.product_2nf;
+
+ALTER TABLE nf_lesson.product_3nf ADD CONSTRAINT pk_product_3nf PRIMARY KEY (product_id);
+
+/*Создание таблиц nf_lesson.craftsman_3nf*/
+
+DROP TABLE IF EXISTS nf_lesson.craftsman_3nf;
+CREATE TABLE nf_lesson.craftsman_3nf AS
+SELECT DISTINCT 
+	craftsman_id
+	, craftsman_name
+	, craftsman_surname
+	, craftsman_address_street
+	, craftsman_address_building
+	, craftsman_birthday
+	, craftsman_email 
+FROM nf_lesson.product_2nf;
+
+ALTER TABLE nf_lesson.craftsman_3nf ADD CONSTRAINT pk_craftsman_3nf PRIMARY KEY (craftsman_id);
+
+-- Чтобы перевести модель данных из третьей формы в четвёртую, нужно избавиться от  многозначных зависимостей. 
+-- Они могут возникать только в таблицах с тремя и более колонками.
