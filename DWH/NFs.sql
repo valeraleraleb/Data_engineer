@@ -84,3 +84,112 @@ SELECT id -- идентификатор записи
 FROM source1.craft_market_wide;
 
 ALTER TABLE nf_lesson.craft_market_wide_1nf ADD CONSTRAINT pk_craft_market_wide_1nf PRIMARY KEY (id);
+
+-- Чтобы перевести модель данных в 2NF, должны выполняться следующие критерии:
+-- модель данных находится в 1NF;
+-- у всех таблиц модели есть первичный ключ;
+-- неключевые поля таблиц зависят от первичного ключа.
+
+-- Изучите данные в таблице nf_lesson.craft_market_wide_1nf. Убедитесь, что таблица не соответствует критериям 2NF. 
+-- Проверьте, есть ли в идентификаторах craftsman_id, product_id, order_id и customer_id поля с повторяющимися значениями
+SELECT craftsman_id, Count(*)
+from nf_lesson.craft_market_wide_1nf
+group by craftsman_id
+having COUNT(*) > 1;
+
+SELECT product_id, Count(*)
+from nf_lesson.craft_market_wide_1nf
+group by product_id
+having COUNT(*) > 1;
+
+
+SELECT order_id, Count(*)
+from nf_lesson.craft_market_wide_1nf
+group by order_id
+having COUNT(*) > 1;
+
+SELECT 
+customer_id, Count(*)
+from nf_lesson.craft_market_wide_1nf
+group by customer_id
+having COUNT(*) > 1;
+
+-- Чтобы перевести таблицу nf_lesson.craft_market_wide_1nf во вторую нормальную форму, нужно разделить её на две сущности — order и product. 
+-- В order будет храниться информация о заказе и покупателе, а в product — об изделии и мастере.
+-- Создайте таблицу nf_lesson.order_2nf для выделенной сущности order. 
+
+DROP TABLE IF EXISTS nf_lesson.order_2nf;
+
+CREATE TABLE nf_lesson.order_2nf AS
+SELECT DISTINCT 
+	order_id
+	, product_id
+	, order_created_date
+	, order_completion_date
+	, order_status
+	, customer_id
+	, customer_name
+	, customer_surname
+	, customer_address_street
+	, customer_address_building
+	, customer_birthday
+	, customer_email
+FROM nf_lesson.craft_market_wide_1nf;
+
+ALTER TABLE nf_lesson.order_2nf ADD CONSTRAINT pk_order_2nf PRIMARY KEY (order_id);
+
+-- Создайте таблицу nf_lesson.product_2nf для выделенной сущности product.
+
+DROP TABLE IF EXISTS nf_lesson.product_2nf;
+
+CREATE TABLE nf_lesson.product_2nf AS
+SELECT DISTINCT 
+	craftsman_id
+	, craftsman_name
+	, craftsman_surname
+	, craftsman_address_street
+	, craftsman_address_building
+	, craftsman_birthday
+	, craftsman_email
+	, product_id
+	, product_name
+	, product_description
+	, product_type
+	, product_price
+FROM nf_lesson.craft_market_wide_1nf;
+
+ALTER TABLE nf_lesson.product_2nf ADD CONSTRAINT pk_product_2nf PRIMARY KEY (craftsman_id, product_id);
+
+-- Таким образом, таблица находится в 3NF, если:
+-- она находится во второй нормальной форме;
+-- все неключевые поля таблицы нетранзитивно зависят от ключевого поля.
+
+-- Для начала декомпозируйте таблицу nf_lesson.order_2nf — создайте таблицы nf_lesson.order_3nf 
+-- и nf_lesson.customer_3nf, в которых все неключевые поля будут нетранзитивно зависеть от ключевого поля
+
+DROP TABLE IF EXISTS nf_lesson.order_3nf;
+CREATE TABLE nf_lesson.order_3nf AS
+SELECT DISTINCT 
+	order_id
+	, order_created_date
+	, order_completion_date
+	, order_status
+	, customer_id
+	, product_id
+FROM nf_lesson.order_2nf;
+
+ALTER TABLE nf_lesson.order_3nf ADD CONSTRAINT pk_order_3nf PRIMARY KEY (order_id);
+
+DROP TABLE IF EXISTS nf_lesson.customer_3nf;
+CREATE TABLE nf_lesson.customer_3nf AS
+SELECT DISTINCT 
+	customer_id
+	, customer_name
+	, customer_surname
+	, customer_address_street
+	, customer_address_building
+	, customer_birthday
+	, customer_email
+FROM nf_lesson.order_2nf;
+
+ALTER TABLE nf_lesson.customer_3nf ADD CONSTRAINT pk_customer_3nf PRIMARY KEY (customer_id);
